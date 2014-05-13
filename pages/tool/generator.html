@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>天天中奖模板填单工具</title>
+  <style>
+    textarea{
+      resize: vertical;
+    }
+    .footer{
+      text-align: center;
+      clear: both;
+      font-size: 12px;
+      line-height: 20px;
+      margin: 20px 0;
+    }
+    .form,
+    .textarea{
+      float: left;
+      width: 50%;
+    }
+    .input{
+      font-size: 16px;
+      line-height: 20px;
+      margin: 0 0 5px 0;
+    }
+    .input label{
+      display: inline-block;
+      width: 100px;
+      font-size: 14px;
+      vertical-align: top;
+    }
+    .input input[type=text],
+    .input textarea{
+      width: 200px;
+      margin: 0;
+      padding: 2px;
+      border: 1px solid #aaa;
+      vertical-align: top;
+      font-size: 12px;
+      font-family: 'microsoft yahei', 'hiragino sans gb', sans-serif;
+    }
+    .input span{
+      font-size: 12px;
+      line-height: 20px;
+      color: #888;
+      vertical-align: top;
+    }
+    .item-generator{
+      margin-top: 20px;
+    }
+    .textarea .input textarea{
+      width: 400px;
+      font-size: 12px;
+      line-height: 20px;
+      font-family: 'consolas', 'courier new', monospace, serif;
+    }
+  </style>
+</head>
+<body>
+<h1>天天中奖模板填单工具</h1>
+
+<div class="form">
+  <div class="base-info">
+    <div class="input">
+      <label for="group-id">活动ID</label>
+      <input type="text" id="group-id"/>
+      <span>填写抽奖活动的ID</span>
+    </div>
+    <div class="input">
+      <label for="city-name">城市拼音</label>
+      <input type="text" id="city-name"/>
+      <span>填写活动城市的拼音，GA使用</span>
+    </div>
+  </div>
+
+  <div class="item-generator"> 
+    <form id="form">
+    <h2>添加商户</h2>
+    <div class="input">
+      <label for="item-name">商户名称</label>
+      <input type="text" id="item-name"/>
+      <span>为保证可见性建议不超过10个汉字</span>
+    </div>
+    <div class="input">
+      <label for="item-link">商户链接</label>
+      <input type="text" id="item-link"/>
+    </div>
+    <div class="input">
+      <label for="item-img">商户图片</label>
+      <input type="text" id="item-img"/>
+      <span>默认路径为"img/{#index}.jpg"（从1开始）</span>
+    </div>
+    <div class="input">
+      <label for="item-introduction">简短介绍</label>
+      <input type="text" id="item-introduction"/>
+      <span>建议不超过80字，如有详细介绍建议不超过60字</span>
+    </div>
+    <div class="input">
+      <label for="item-more">详细介绍</label>
+      <input type="text" id="item-more"/>
+      <span>没有留空即可</span>
+    </div>
+    <div class="input">
+      <label for="item-promotion">优惠券链接</label>
+      <input type="text" id="item-promotion"/>
+      <span>没有留空即可</span>
+    </div>
+    <div class="input">
+      <label for="item-coupon">团购链接</label>
+      <input type="text" id="item-coupon"/>
+      <span>没有留空即可</span>
+    </div>
+    <div class="input">
+      <label for="item-booking">预订链接</label>
+      <input type="text" id="item-booking"/>
+      <span>没有留空即可</span>
+    </div>
+    <div class="input">
+      <label for="item-member">会员卡链接</label>
+      <input type="text" id="item-member"/>
+      <span>没有留空即可</span>
+    </div>
+    <div class="input">
+      <label for="item-carousel">轮播图片</label>
+      <textarea id="item-carousel" rows="4"></textarea>
+      <span>没有留空即可，至少4个起</span>
+    </div>
+    <div class="input">
+      <label></label>
+      <button id="add" type="button">添加</button>
+      <button id="delete" type="button">删除最后一个</button>
+    </div>
+	</form>
+  </div>
+
+</div>
+<div class="textarea">
+  <div class="input">
+    <label for="text-area">输出结果</label>
+    <textarea readonly="readonly" name="textarea" id="text-area" cols="30" rows="30"></textarea>
+  </div>
+</div>
+<div class="footer">
+  2014
+</div>
+<script src="../../js/jquery.min.js"></script>
+<script>
+  jQuery(function($){
+    var items = [];
+
+    $('#add').on('click', function(){
+      var length = items.length;
+
+      var item = {
+        name : $('#item-name').val(),
+        link : $('#item-link').val(),
+        img : $('#item-img').val() || 'img/' + (length + 1) + '.jpg',
+        introduction : $('#item-introduction').val(),
+        more : $('#item-more').val(),
+        promotion : $('#item-promotion').val(),
+        coupon : $('#item-coupon').val(),
+        booking : $('#item-booking').val(),
+        member : $('#item-member').val(),
+        carousel : (function(){
+          var array = $('#item-carousel').val();
+		  array ? array = array.split('\n') : array = [];
+
+          $.each(array, function(key, val){
+            array[key] = $.trim(val);
+          });
+
+          return array;
+        })()
+      };
+
+      items.push(item);
+	  
+	  $('#form').trigger('reset');
+    });
+
+    $('#text-area').on('click', function(){
+      this.select();
+    });
+
+    $('#delete').on('click', function(){
+      items.length && items.pop();
+    });
+
+    setInterval(function(){
+      var text = [
+        'pageTracker._trackPageview("events/market/ttzj/' + $('#city-name').val() + '");\n\n',
+        'window.GROUP_ID = ' + ($('#group-id').val() || 0) + ';\n\n',
+        'window.storeList = ' + JSON.stringify(items),
+		';'
+      ].join('');
+
+      $('#text-area').val(text);
+    }, 1000);
+  });
+</script>
+</body>
+</html>
