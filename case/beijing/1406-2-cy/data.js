@@ -124,8 +124,5 @@ window.storeList = [{
         } else {
             item.more = "";
         }
-        
-        
-
     }
 })()
